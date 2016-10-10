@@ -17,4 +17,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
 
-Route::get('/locales', 'Api\LocalesController@index')->name('api.locales.index');
+Route::get('/locales', 'Api\LocalesController@index')
+    ->name('api.locales.index');
+//    ->middleware('auth:api');
+
+Route::get('/locales/{code}/name', 'Api\LocalesController@getNameByCode')
+    ->name('api.locales.name');
