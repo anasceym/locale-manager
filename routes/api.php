@@ -27,6 +27,9 @@ Route::get('/locales/{code}/name', 'Api\LocalesController@getNameByCode')
 Route::get('/projects/{project}', 'Api\ProjectsController@show')
     ->name('api.projects.show');
 
+Route::delete('/projects/{project}', 'Api\ProjectsController@destroy')
+    ->name('api.projects.delete');
+
 Route::get('/projects', 'Api\ProjectsController@index')
     ->name('api.projects.index');
 

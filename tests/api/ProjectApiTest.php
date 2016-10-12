@@ -96,6 +96,38 @@ class ProjectApiTest extends TestCase
         $this->assertResponseStatus(404);
     }
 
+    /**
+     * @test
+     */
+    public function it_should_delete_particular_project() {
+
+        $project = factory(App\Project::class)->create();
+
+        $this->be($project->owner);
+
+        $request = $this->json('delete', "/api/projects/{$project->id}");
+
+        $this->assertResponseStatus(204);
+        $this->dontSeeInDatabase('projects', ['id' => $project->id, 'deleted_at' => null]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_404_when_unauthorized_to_delete() {
+
+        $project = factory(App\Project::class)->create();
+
+        $differentUser = factory(App\User::class)->create();
+
+        $this->be($differentUser);
+
+        $request = $this->json('delete', "/api/projects/{$project->id}");
+
+        $this->assertResponseStatus(404);
+        $this->assertNotNull(\App\Project::find($project->id));
+    }
+
     private function getExpectedProjectStructure() {
 
         return [

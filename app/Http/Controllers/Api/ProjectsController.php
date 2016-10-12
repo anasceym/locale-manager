@@ -39,6 +39,12 @@ class ProjectsController extends ApiBaseController
         return response()->json($project, 201);
     }
 
+    /**
+     * Method to get Project details
+     *
+     * @param Project $project
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show(Project $project) {
 
         if(!Auth::user()->projects()->find($project->id)) {
@@ -47,5 +53,27 @@ class ProjectsController extends ApiBaseController
         }
 
         return response()->json($project);
+    }
+
+    /**
+     * Method to delete particular Project
+     * 
+     * @param Project $project
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function destroy(Project $project) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        if(!$project->delete()) {
+
+            return response()->json([], 500);
+        }
+
+        return response()->json([], 204);
     }
 }
