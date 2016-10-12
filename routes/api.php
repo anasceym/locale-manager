@@ -23,3 +23,12 @@ Route::get('/locales', 'Api\LocalesController@index')
 
 Route::get('/locales/{code}/name', 'Api\LocalesController@getNameByCode')
     ->name('api.locales.name');
+
+Route::get('/projects/{project}', 'Api\ProjectsController@show')
+    ->name('api.projects.show');
+
+Route::get('/projects', 'Api\ProjectsController@index')
+    ->name('api.projects.index');
+
+Route::post('/projects', 'Api\ProjectsController@handleCreate')
+    ->name('api.projects.create');
