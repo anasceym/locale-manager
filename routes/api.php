@@ -26,6 +26,12 @@ Route::get('/locales/{code}/name', 'Api\LocalesController@getNameByCode')
 
 Route::group(['prefix' => 'projects'], function() {
 
+    Route::delete('/{project}/lang/{project_lang}', 'Api\ProjectsController@deleteLang')
+        ->name('api.projects.lang.delete');
+
+    Route::post('/{project}/lang', 'Api\ProjectsController@postLang')
+        ->name('api.projects.lang.create');
+
     Route::get('/{project}', 'Api\ProjectsController@show')
         ->name('api.projects.show');
 
