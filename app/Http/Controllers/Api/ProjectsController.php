@@ -76,4 +76,26 @@ class ProjectsController extends ApiBaseController
 
         return response()->json([], 204);
     }
+
+    /**
+     * Method to update particula Project
+     * 
+     * @param Request $request
+     * @param Project $project
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, Project $project) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        if (!$project->update($request->all())) {
+
+            return response()->json([], 500);
+        }
+
+        return response()->json($project);
+    }
 }

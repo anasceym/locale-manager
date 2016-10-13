@@ -128,6 +128,45 @@ class ProjectApiTest extends TestCase
         $this->assertNotNull(\App\Project::find($project->id));
     }
 
+    /**
+     * @test
+     */
+    public function it_should_update_particular_project() {
+
+        $project = factory(App\Project::class)->create();
+
+        $updatePostData = [
+            'name' => 'Kiddos New Project'
+        ];
+
+        $this->be($project->owner);
+
+        $request = $this->json('patch', "/api/projects/{$project->id}", $updatePostData);
+
+        $this->assertResponseStatus(200);
+
+        $this->seeInDatabase('projects', [
+            'id' => $project->id,
+            'name' => $updatePostData['name']
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_404_when_unauthorized_to_update() {
+
+        $project = factory(App\Project::class)->create();
+
+        $differentUser = factory(App\User::class)->create();
+
+        $this->be($differentUser);
+
+        $request = $this->json('patch', "/api/projects/{$project->id}");
+
+        $this->assertResponseStatus(404);
+    }
+
     private function getExpectedProjectStructure() {
 
         return [

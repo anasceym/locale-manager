@@ -30,6 +30,9 @@ Route::get('/projects/{project}', 'Api\ProjectsController@show')
 Route::delete('/projects/{project}', 'Api\ProjectsController@destroy')
     ->name('api.projects.delete');
 
+Route::patch('/projects/{project}', 'Api\ProjectsController@update')
+    ->name('api.projects.update');
+
 Route::get('/projects', 'Api\ProjectsController@index')
     ->name('api.projects.index');
 
