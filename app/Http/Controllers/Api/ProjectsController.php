@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Project;
+use App\Project_lang;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Auth;
 use Validator;
+use Config;
 
 class ProjectsController extends ApiBaseController
 {
@@ -97,5 +99,70 @@ class ProjectsController extends ApiBaseController
         }
 
         return response()->json($project);
+    }
+
+    /**
+     * Method to set specific Project language
+     *
+     * @param Request $request
+     * @param Project $project
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function postLang(Request $request, Project $project) {
+
+        $this->validate($request, [
+            'lang_code' => 'required'
+        ]);
+
+        $allRequestArr = $request->all();
+
+        if (!Config::get("locale.{$allRequestArr['lang_code']}")) {
+
+            return response()->json([
+                'message' => 'Validation fails. Language code not found'
+            ],422);
+        }
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $langs = $project->langs()->create($request->all());
+
+        return response()->json($langs, 201);
+    }
+
+    /**
+     * Method to delete a Project Lang
+     * @param Project $project
+     * @param Project_lang $lang
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteLang(Project $project, $lang) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $projectLang = $project->langs()->find($lang);
+
+        if(!$projectLang) {
+
+            $projectLang = $project->langs()->where('lang_code', $lang)->first();
+
+            if (!$projectLang) {
+
+                return response()->json([], 404);
+            }
+        }
+
+        if (!$projectLang->delete()) {
+
+            return response()->json([], 500);
+        }
+
+        return response()->json([], 204);
     }
 }

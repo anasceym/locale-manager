@@ -24,17 +24,27 @@ Route::get('/locales', 'Api\LocalesController@index')
 Route::get('/locales/{code}/name', 'Api\LocalesController@getNameByCode')
     ->name('api.locales.name');
 
-Route::get('/projects/{project}', 'Api\ProjectsController@show')
-    ->name('api.projects.show');
+Route::group(['prefix' => 'projects'], function() {
 
-Route::delete('/projects/{project}', 'Api\ProjectsController@destroy')
-    ->name('api.projects.delete');
+    Route::delete('/{project}/lang/{project_lang}', 'Api\ProjectsController@deleteLang')
+        ->name('api.projects.lang.delete');
 
-Route::patch('/projects/{project}', 'Api\ProjectsController@update')
-    ->name('api.projects.update');
+    Route::post('/{project}/lang', 'Api\ProjectsController@postLang')
+        ->name('api.projects.lang.create');
 
-Route::get('/projects', 'Api\ProjectsController@index')
-    ->name('api.projects.index');
+    Route::get('/{project}', 'Api\ProjectsController@show')
+        ->name('api.projects.show');
 
-Route::post('/projects', 'Api\ProjectsController@handleCreate')
-    ->name('api.projects.create');
+    Route::delete('/{project}', 'Api\ProjectsController@destroy')
+        ->name('api.projects.delete');
+
+    Route::patch('/{project}', 'Api\ProjectsController@update')
+        ->name('api.projects.update');
+
+    Route::get('/', 'Api\ProjectsController@index')
+        ->name('api.projects.index');
+
+    Route::post('/', 'Api\ProjectsController@handleCreate')
+        ->name('api.projects.create');
+
+});

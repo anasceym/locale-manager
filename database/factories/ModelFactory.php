@@ -29,3 +29,11 @@ $factory->define(App\Project::class, function (Faker\Generator $faker) {
         'user_id' => factory(App\User::class)->create()->id
     ];
 });
+
+$factory->define(App\Project_lang::class, function (Faker\Generator $faker) {
+
+    return [
+        'lang_code' => collect(collect(Config::get('locale'))->keys())->random(),
+        'project_id' => factory(App\Project::class)->create()->id
+    ];
+});

@@ -25,4 +25,14 @@ class Project extends Model
 
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * Relation to Project_lang
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function langs() {
+
+        return $this->hasMany(Project_lang::class);
+    }
 }
