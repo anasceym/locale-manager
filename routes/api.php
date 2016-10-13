@@ -16,3 +16,25 @@ use Illuminate\Http\Request;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
+
+Route::get('/locales', 'Api\LocalesController@index')
+    ->name('api.locales.index');
+//    ->middleware('auth:api');
+
+Route::get('/locales/{code}/name', 'Api\LocalesController@getNameByCode')
+    ->name('api.locales.name');
+
+Route::get('/projects/{project}', 'Api\ProjectsController@show')
+    ->name('api.projects.show');
+
+Route::delete('/projects/{project}', 'Api\ProjectsController@destroy')
+    ->name('api.projects.delete');
+
+Route::patch('/projects/{project}', 'Api\ProjectsController@update')
+    ->name('api.projects.update');
+
+Route::get('/projects', 'Api\ProjectsController@index')
+    ->name('api.projects.index');
+
+Route::post('/projects', 'Api\ProjectsController@handleCreate')
+    ->name('api.projects.create');
