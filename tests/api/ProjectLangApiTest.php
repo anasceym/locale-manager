@@ -66,6 +66,36 @@ class ProjectLangApiTest extends TestCase
     /**
      * @test
      */
+    public function it_should_return_409_when_adding_project_lang_with_existed_code() {
+
+        $langKeys = collect(collect(Config::get('locale'))->keys());
+
+        $langKey = $langKeys->random();
+
+        $sameCode = $langKey;
+
+        $existingProjectLang = factory(App\Project_lang::class)->create(['lang_code' => $sameCode]);
+
+        $this->be($existingProjectLang->project->owner);
+
+        $postData = [
+            'lang_code' => $sameCode
+        ];
+
+        $expectedResponseJsonStructure = [
+            'id',
+            'lang_code',
+        ];
+
+        $request = $this->json('post', "/api/projects/{$existingProjectLang->project->id}/lang", $postData);
+
+        $this->assertResponseStatus(409);
+        $request->seeJsonStructure($expectedResponseJsonStructure);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_return_404_if_unauthorize_to_add_project_lang() {
 
         $project = factory(App\Project::class)->create();
