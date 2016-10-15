@@ -128,7 +128,14 @@ class ProjectsController extends ApiBaseController
             return response()->json([], 404);
         }
 
-        $langs = $project->langs()->create($request->all());
+        $requestArray = $request->all();
+
+        if ($existingProjectLang = $project->langs()->where('lang_code', $requestArray['lang_code'])->first()) {
+
+            return response()->json($existingProjectLang, 409);
+        }
+
+        $langs = $project->langs()->create($requestArray);
 
         return response()->json($langs, 201);
     }
