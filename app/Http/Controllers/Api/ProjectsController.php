@@ -172,4 +172,34 @@ class ProjectsController extends ApiBaseController
 
         return response()->json([], 204);
     }
+
+    /**
+     * Method to create namespace
+     *
+     * @param Request $request
+     * @param Project $project
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function createNamespace(Request $request, Project $project) {
+
+        $this->validate($request, [
+            'name' => 'required'
+        ]);
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $requestArray = $request->all();
+
+        if ($project->namespaces()->where('name', $requestArray['name'])->first()) {
+
+            return response([], 409);
+        }
+
+        $namespace = $project->namespaces()->create($requestArray);
+
+        return response()->json($namespace, 201);
+    }
 }

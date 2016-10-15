@@ -35,4 +35,14 @@ class Project extends Model
 
         return $this->hasMany(Project_lang::class);
     }
+
+    /**
+     * Relation to Project_namespace
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function namespaces() {
+
+        return $this->hasMany(Project_namespace::class);
+    }
 }

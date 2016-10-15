@@ -32,6 +32,9 @@ Route::group(['prefix' => 'projects'], function() {
     Route::post('/{project}/lang', 'Api\ProjectsController@postLang')
         ->name('api.projects.lang.create');
 
+    Route::post('/{project}/namespaces', 'Api\ProjectsController@createNamespace')
+        ->name('api.projects.namespaces.create');
+
     Route::get('/{project}', 'Api\ProjectsController@show')
         ->name('api.projects.show');
 
