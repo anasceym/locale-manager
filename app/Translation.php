@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Project_namespace extends Model
+class Translation extends Model
 {
     use SoftDeletes;
 
@@ -15,7 +15,11 @@ class Project_namespace extends Model
      * @var array
      */
     protected $fillable = [
-        'name'
+        'project_lang_id',
+        'project_namespace_id',
+        'project_id',
+        'text_key',
+        'text_value',
     ];
 
     /**
@@ -26,16 +30,5 @@ class Project_namespace extends Model
     public function project() {
 
         return $this->belongsTo(Project::class);
-    }
-
-    /**
-     * Custom attribute to get name key
-     *
-     * @param $value
-     * @return mixed
-     */
-    public function getNameKeyAttribute($value) {
-
-        return str_replace(' ', '_', strtolower($this->attributes['name']));
     }
 }

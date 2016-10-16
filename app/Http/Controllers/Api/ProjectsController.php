@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Project;
 use App\Project_lang;
 use App\Project_namespace;
+use App\Translation;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Validator;
 use Config;
+use Log;
 
 class ProjectsController extends ApiBaseController
 {
@@ -287,5 +289,95 @@ class ProjectsController extends ApiBaseController
         }
 
         return response()->json($namespace, 200);
+    }
+
+    /**
+     * Method to handle import
+     *
+     * @param Request $request
+     * @param Project $project
+     * @param $type
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function import(Request $request, Project $project, $type) {
+
+        Log::info("[ Importer ] Started to import using {$type}");
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            Log::error('[ Importer ] Authorized failed to import file');
+
+            return response()->json([], 404);
+        }
+
+        switch($type) {
+            case 'file':
+                return $this->handleImportFile($request, $project);
+                break;
+            default:
+                break;
+        }
+
+        Log::error("[ Importer ] Cant file import method {$type}");
+        return response()->json([], 404);
+    }
+
+    /**
+     * Method to handle import from file
+     *
+     * @param Request $request
+     * @param Project $project
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function handleImportFile(Request $request, Project $project) {
+
+        Log::info('[ Importer ] Started to import from file');
+
+        $this->validate($request, [
+            'file' => 'required|file',
+            'project_lang_id' => 'required',
+            'project_namespace_id' => 'required',
+        ]);
+
+        $requestArray = $request->all();
+
+        $fileContent = include($requestArray['file']);
+
+        if (is_array($fileContent)) {
+
+            $fileContent = collect($fileContent);
+
+            foreach($fileContent as $key => $value) {
+
+                $preparedCreateData = [
+                    'project_lang_id' => $requestArray['project_lang_id'],
+                    'project_namespace_id' => $requestArray['project_namespace_id'],
+                    'project_id' => $project->id,
+                    'text_key' => $key,
+                    'text_value' => $value
+                ];
+
+                $translation = Translation::create($preparedCreateData);
+
+                if (!$translation) {
+
+                    Log::error('[ Importer ] Failed to create Translation', $preparedCreateData);
+                }
+                else {
+
+                    Log::info('[ Importer ] Successfull to create Translation');
+                }
+            }
+        }
+        else {
+
+            Log::error('[ Importer ] Failed to parse PHP file. Content : ' . $fileContent);
+
+            return response()->json([], 422);
+        }
+
+        Log::info('[ Importer ] End import from file');
+
+        return response()->json([], 200);
     }
 }
