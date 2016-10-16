@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Project;
 use App\Project_lang;
+use App\Project_namespace;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -201,5 +202,35 @@ class ProjectsController extends ApiBaseController
         $namespace = $project->namespaces()->create($requestArray);
 
         return response()->json($namespace, 201);
+    }
+
+    /**
+     * Method to delete a particular Project namespace
+     * 
+     * @param Request $request
+     * @param Project $project
+     * @param Project_namespace $namespace
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteNamespace(Request $request, Project $project, Project_namespace $namespace) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $namespace = $project->namespaces()->find($namespace->id);
+
+        if (!$namespace) {
+
+            return response()->json([], 404);
+        }
+
+        if (!$namespace->delete()) {
+
+            return response()->json([], 500);
+        }
+
+        return response()->json([], 204);
     }
 }

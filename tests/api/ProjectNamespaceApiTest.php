@@ -101,4 +101,52 @@ class ProjectNamespaceApiTest extends TestCase
 
         $this->assertResponseStatus(409);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_delete_a_particular_project_namespace() {
+
+        $namespace = factory(App\Project_namespace::class)->create();
+
+        $this->be($namespace->project->owner);
+
+        $request = $this->json('delete', "/api/projects/{$namespace->project->id}/namespaces/{$namespace->id}");
+
+        $this->assertResponseStatus(204);
+
+        $this->dontSeeInDatabase('project_namespaces', ['id' => $namespace->id, 'deleted_at' => null]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_404_when_namespace_with_different_project_id() {
+
+        $namespace = factory(App\Project_namespace::class)->create();
+
+        $this->be($namespace->project->owner);
+
+        $anotherProject = factory(App\Project::class)->create();
+
+        $request = $this->json('delete', "/api/projects/{$anotherProject->id}/namespaces/{$namespace->id}");
+
+        $this->assertResponseStatus(404);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_404_when_unauthorize_to_the_project() {
+
+        $namespace = factory(App\Project_namespace::class)->create();
+
+        $anotherUser = factory(App\User::class)->create();
+
+        $this->be($anotherUser);
+
+        $request = $this->json('delete', "/api/projects/{$namespace->project->id}/namespaces/{$namespace->id}");
+
+        $this->assertResponseStatus(404);
+    }
 }
