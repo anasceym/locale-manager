@@ -345,29 +345,7 @@ class ProjectsController extends ApiBaseController
 
         if (is_array($fileContent)) {
 
-            $fileContent = collect($fileContent);
-
-            foreach($fileContent as $key => $value) {
-
-                $preparedCreateData = [
-                    'project_lang_id' => $requestArray['project_lang_id'],
-                    'project_namespace_id' => $requestArray['project_namespace_id'],
-                    'project_id' => $project->id,
-                    'text_key' => $key,
-                    'text_value' => $value
-                ];
-
-                $translation = Translation::create($preparedCreateData);
-
-                if (!$translation) {
-
-                    Log::error('[ Importer ] Failed to create Translation', $preparedCreateData);
-                }
-                else {
-
-                    Log::info('[ Importer ] Successfull to create Translation');
-                }
-            }
+            Translation::createFromManyKeyValue(collect($fileContent), $project->id, $requestArray['project_lang_id'], $requestArray['project_namespace_id']);
         }
         else {
 
