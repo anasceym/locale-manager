@@ -27,4 +27,15 @@ class Project_namespace extends Model
 
         return $this->belongsTo(Project::class);
     }
+
+    /**
+     * Custom attribute to get name key
+     *
+     * @param $value
+     * @return mixed
+     */
+    public function getNameKeyAttribute($value) {
+
+        return str_replace(' ', '_', strtolower($this->attributes['name']));
+    }
 }
