@@ -38,6 +38,9 @@ Route::group(['prefix' => 'projects'], function() {
     Route::delete('/{project}/namespaces/{namespace}', 'Api\ProjectsController@deleteNamespace')
         ->name('api.projects.namespaces.delete');
 
+    Route::patch('/{project}/namespaces/{namespace}', 'Api\ProjectsController@updateNamespace')
+        ->name('api.projects.namespaces.update');
+
     Route::post('/{project}/namespaces', 'Api\ProjectsController@createNamespace')
         ->name('api.projects.namespaces.create');
 

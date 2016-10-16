@@ -214,4 +214,24 @@ class ProjectNamespaceApiTest extends TestCase
 
         $this->assertResponseStatus(404);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_able_to_update_specific_project_namespace() {
+
+        $namespace = factory(App\Project_namespace::class)->create();
+
+        $this->be($namespace->project->owner);
+
+        $updatePostData = [
+            'name' => 'Kiddos'
+        ];
+
+        $request = $this->json('patch', "/api/projects/{$namespace->project->id}/namespaces/{$namespace->id}", $updatePostData);
+
+        $this->assertResponseStatus(200);
+
+        $this->seeInDatabase('project_namespaces', ['id' => $namespace->id, 'name' => $updatePostData]);
+    }
 }
