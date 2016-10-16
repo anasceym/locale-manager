@@ -34,7 +34,6 @@ class Translation extends Model
         return $this->belongsTo(Project::class);
     }
 
-
     /**
      * @param Project $project
      * @param $fileContent
@@ -71,5 +70,25 @@ class Translation extends Model
 
             Log::error('[ TranslationModel ] Failed to create Translation from key value', $preparedCreateData);
         }
+    }
+
+    /**
+     * Relation to Project lang
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function lang() {
+
+        return $this->belongsTo(Project_lang::class, 'project_lang_id');
+    }
+
+    /**
+     * Relation to Project namespace
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function nspace() {
+
+        return $this->belongsTo(Project_namespace::class, 'project_namespace_id');
     }
 }

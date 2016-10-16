@@ -6,6 +6,7 @@ use App\Project;
 use App\Project_lang;
 use App\Project_namespace;
 use App\Translation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -14,6 +15,8 @@ use Auth;
 use Validator;
 use Config;
 use Log;
+use Storage;
+use ZipArchive;
 
 class ProjectsController extends ApiBaseController
 {
@@ -359,8 +362,52 @@ class ProjectsController extends ApiBaseController
         return response()->json([], 200);
     }
 
-    public function export(Request $request) {
+    public function export(Request $request, Project $project) {
 
+        $translations = $project->translations()->orderBy('project_lang_id', 'ASC')->orderBy('project_namespace_id', 'ASC')->orderBy('text_key', 'ASC')->get();
+
+        $preparedExportData = [];
+
+        foreach($translations as $translation) {
+
+            $preparedExportData[$translation->lang->lang_code][$translation->nspace->name_key][$translation->text_key] = $translation->text_value;
+        }
+
+        $today = Carbon::today()->format('Ymd');
+
+        $baseFolder = 'exported-data'.DIRECTORY_SEPARATOR.$today.DIRECTORY_SEPARATOR.$project->id.DIRECTORY_SEPARATOR;
+
+        $successfullExportedFiles = [];
+
+        foreach($preparedExportData as $langKey => $namespaces) {
+
+            $directoryPath = $baseFolder . 'sources'.DIRECTORY_SEPARATOR.$langKey.DIRECTORY_SEPARATOR;
+
+            foreach($namespaces as $namespace => $translated) {
+
+                $fileName = "{$namespace}.php";
+
+                $fullFilePath = $directoryPath . $fileName;
+
+                Storage::disk('local')->put($fullFilePath, '<?php ');
+
+                if(Storage::disk('local')->append($fullFilePath, 'return '.var_export($translated, true).';')) {
+
+                    $successfullExportedFiles[] = $fullFilePath;
+                }
+            }
+        }
+
+        $zipname = "{$today}-exported-locale-{$project->id}.zip";
+
+        $zip = new ZipArchive;
+
+        $zip->open($zipname, ZipArchive::CREATE);
+
+        foreach ($successfullExportedFiles as $file) {
+            $zip->addFile($file);
+        }
         
+        $zip->close();
     }
 }

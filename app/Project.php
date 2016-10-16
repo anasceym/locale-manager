@@ -45,4 +45,14 @@ class Project extends Model
 
         return $this->hasMany(Project_namespace::class);
     }
+
+    /**
+     * Relation to App\Translation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function translations() {
+
+        return $this->hasMany(Translation::class);
+    }
 }
