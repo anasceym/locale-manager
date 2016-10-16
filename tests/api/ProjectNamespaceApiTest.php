@@ -149,4 +149,69 @@ class ProjectNamespaceApiTest extends TestCase
 
         $this->assertResponseStatus(404);
     }
+
+    /**
+     * @test
+     */
+    public function it_should_give_detail_about_particular_namespace() {
+
+        $namespace = factory(App\Project_namespace::class)->create();
+
+        $this->be($namespace->project->owner);
+
+        $request = $this->json('get', "/api/projects/{$namespace->project->id}/namespaces/{$namespace->id}");
+
+        $this->assertResponseStatus(200);
+
+        $request->seeJsonStructure([
+            'id',
+            'name'
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_404_when_namespace_id_not_found() {
+
+        $namespace = factory(App\Project_namespace::class)->create();
+
+        $this->be($namespace->project->owner);
+
+        $request = $this->json('get', "/api/projects/{$namespace->project->id}/namespaces/dfdsdf");
+
+        $this->assertResponseStatus(404);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_404_when_not_authorize_to_the_project() {
+
+        $namespace = factory(App\Project_namespace::class)->create();
+
+        $anotherUser = factory(App\User::class)->create();
+
+        $this->be($anotherUser);
+
+        $request = $this->json('get', "/api/projects/{$namespace->project->id}/namespaces/{$namespace->id}");
+
+        $this->assertResponseStatus(404);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_404_when_namespace_not_belong_to_the_project() {
+
+        $namespace = factory(App\Project_namespace::class)->create();
+
+        $anotherProject = factory(App\Project::class)->create();
+
+        $this->be($anotherProject->owner);
+
+        $request = $this->json('get', "/api/projects/{$anotherProject->id}/namespaces/{$namespace->id}");
+
+        $this->assertResponseStatus(404);
+    }
 }

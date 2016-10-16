@@ -233,4 +233,29 @@ class ProjectsController extends ApiBaseController
 
         return response()->json([], 204);
     }
+
+    /**
+     * Method to show Project namespace
+     *
+     * @param Request $request
+     * @param Project $project
+     * @param Project_namespace $namespace
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showNamespace(Request $request, Project $project, Project_namespace $namespace) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $namespace = $project->namespaces()->find($namespace->id);
+
+        if (!$namespace) {
+
+            return response()->json([], 404);
+        }
+
+        return response()->json($namespace, 200);
+    }
 }
