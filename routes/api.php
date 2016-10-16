@@ -32,6 +32,18 @@ Route::group(['prefix' => 'projects'], function() {
     Route::post('/{project}/lang', 'Api\ProjectsController@postLang')
         ->name('api.projects.lang.create');
 
+    Route::get('/{project}/namespaces/{namespace}', 'Api\ProjectsController@showNamespace')
+        ->name('api.projects.namespaces.show');
+
+    Route::delete('/{project}/namespaces/{namespace}', 'Api\ProjectsController@deleteNamespace')
+        ->name('api.projects.namespaces.delete');
+
+    Route::patch('/{project}/namespaces/{namespace}', 'Api\ProjectsController@updateNamespace')
+        ->name('api.projects.namespaces.update');
+
+    Route::post('/{project}/namespaces', 'Api\ProjectsController@createNamespace')
+        ->name('api.projects.namespaces.create');
+
     Route::get('/{project}', 'Api\ProjectsController@show')
         ->name('api.projects.show');
 

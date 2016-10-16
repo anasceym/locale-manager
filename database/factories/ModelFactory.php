@@ -37,3 +37,11 @@ $factory->define(App\Project_lang::class, function (Faker\Generator $faker) {
         'project_id' => factory(App\Project::class)->create()->id
     ];
 });
+
+$factory->define(App\Project_namespace::class, function (Faker\Generator $faker) {
+
+    return [
+        'name' => $faker->company,
+        'project_id' => factory(App\Project::class)->create()->id
+    ];
+});

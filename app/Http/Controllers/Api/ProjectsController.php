@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Project;
 use App\Project_lang;
+use App\Project_namespace;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -171,5 +172,120 @@ class ProjectsController extends ApiBaseController
         }
 
         return response()->json([], 204);
+    }
+
+    /**
+     * Method to create namespace
+     *
+     * @param Request $request
+     * @param Project $project
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function createNamespace(Request $request, Project $project) {
+
+        $this->validate($request, [
+            'name' => 'required'
+        ]);
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $requestArray = $request->all();
+
+        if ($project->namespaces()->where('name', $requestArray['name'])->first()) {
+
+            return response([], 409);
+        }
+
+        $namespace = $project->namespaces()->create($requestArray);
+
+        return response()->json($namespace, 201);
+    }
+
+    /**
+     * Method to delete a particular Project namespace
+     * 
+     * @param Request $request
+     * @param Project $project
+     * @param Project_namespace $namespace
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteNamespace(Request $request, Project $project, Project_namespace $namespace) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $namespace = $project->namespaces()->find($namespace->id);
+
+        if (!$namespace) {
+
+            return response()->json([], 404);
+        }
+
+        if (!$namespace->delete()) {
+
+            return response()->json([], 500);
+        }
+
+        return response()->json([], 204);
+    }
+
+    /**
+     * Method to show Project namespace
+     *
+     * @param Request $request
+     * @param Project $project
+     * @param Project_namespace $namespace
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showNamespace(Request $request, Project $project, Project_namespace $namespace) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $namespace = $project->namespaces()->find($namespace->id);
+
+        if (!$namespace) {
+
+            return response()->json([], 404);
+        }
+
+        return response()->json($namespace, 200);
+    }
+
+    /**
+     * Method to update specific project namespace
+     * 
+     * @param Request $request
+     * @param Project $project
+     * @param Project_namespace $namespace
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateNamespace(Request $request, Project $project, Project_namespace $namespace) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $namespace = $project->namespaces()->find($namespace->id);
+
+        if (!$namespace) {
+
+            return response()->json([], 404);
+        }
+
+        if (!$namespace->update($request->all())) {
+
+            return response()->json([], 500);
+        }
+
+        return response()->json($namespace, 200);
     }
 }
