@@ -26,6 +26,9 @@ Route::get('/locales/{code}/name', 'Api\LocalesController@getNameByCode')
 
 Route::group(['prefix' => 'projects'], function() {
 
+    Route::post('/{project}/import/{type}', 'Api\ProjectsController@import')
+        ->name('api.projects.import');
+
     Route::delete('/{project}/lang/{project_lang}', 'Api\ProjectsController@deleteLang')
         ->name('api.projects.lang.delete');
 

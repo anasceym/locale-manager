@@ -53,6 +53,11 @@ return [
             'root' => storage_path('app'),
         ],
 
+        'test' => [
+            'driver' => 'local',
+            'root' => 'tests'.DIRECTORY_SEPARATOR.'resources',
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

@@ -288,4 +288,25 @@ class ProjectsController extends ApiBaseController
 
         return response()->json($namespace, 200);
     }
+
+    public function import(Request $request, Project $project, $type) {
+
+        switch($type) {
+            case 'file':
+                return $this->handleImportFile($request);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private function handleImportFile(Request $request) {
+
+        $requestArray = $request->all();
+
+        $fileContent = include($requestArray['file']);
+
+
+        return response()->json([], 200);
+    }
 }
