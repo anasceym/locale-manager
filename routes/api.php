@@ -17,49 +17,52 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
 
-Route::get('/locales', 'Api\LocalesController@index')
-    ->name('api.locales.index');
-//    ->middleware('auth:api');
+Route::group([
+    'middleware' => ['auth:api']
+], function() {
 
-Route::get('/locales/{code}/name', 'Api\LocalesController@getNameByCode')
-    ->name('api.locales.name');
+    Route::get('/locales', 'Api\LocalesController@index')
+        ->name('api.locales.index');
 
-Route::group(['prefix' => 'projects'], function() {
+    Route::get('/locales/{code}/name', 'Api\LocalesController@getNameByCode')
+        ->name('api.locales.name');
 
-    Route::post('/{project}/import/{type}', 'Api\ProjectsController@import')
-        ->name('api.projects.import');
+    Route::group(['prefix' => 'projects'], function() {
 
-    Route::delete('/{project}/lang/{project_lang}', 'Api\ProjectsController@deleteLang')
-        ->name('api.projects.lang.delete');
+        Route::post('/{project}/import/{type}', 'Api\ProjectsController@import')
+            ->name('api.projects.import');
 
-    Route::post('/{project}/lang', 'Api\ProjectsController@postLang')
-        ->name('api.projects.lang.create');
+        Route::delete('/{project}/lang/{project_lang}', 'Api\ProjectsController@deleteLang')
+            ->name('api.projects.lang.delete');
 
-    Route::get('/{project}/namespaces/{namespace}', 'Api\ProjectsController@showNamespace')
-        ->name('api.projects.namespaces.show');
+        Route::post('/{project}/lang', 'Api\ProjectsController@postLang')
+            ->name('api.projects.lang.create');
 
-    Route::delete('/{project}/namespaces/{namespace}', 'Api\ProjectsController@deleteNamespace')
-        ->name('api.projects.namespaces.delete');
+        Route::get('/{project}/namespaces/{namespace}', 'Api\ProjectsController@showNamespace')
+            ->name('api.projects.namespaces.show');
 
-    Route::patch('/{project}/namespaces/{namespace}', 'Api\ProjectsController@updateNamespace')
-        ->name('api.projects.namespaces.update');
+        Route::delete('/{project}/namespaces/{namespace}', 'Api\ProjectsController@deleteNamespace')
+            ->name('api.projects.namespaces.delete');
 
-    Route::post('/{project}/namespaces', 'Api\ProjectsController@createNamespace')
-        ->name('api.projects.namespaces.create');
+        Route::patch('/{project}/namespaces/{namespace}', 'Api\ProjectsController@updateNamespace')
+            ->name('api.projects.namespaces.update');
 
-    Route::get('/{project}', 'Api\ProjectsController@show')
-        ->name('api.projects.show');
+        Route::post('/{project}/namespaces', 'Api\ProjectsController@createNamespace')
+            ->name('api.projects.namespaces.create');
 
-    Route::delete('/{project}', 'Api\ProjectsController@destroy')
-        ->name('api.projects.delete');
+        Route::get('/{project}', 'Api\ProjectsController@show')
+            ->name('api.projects.show');
 
-    Route::patch('/{project}', 'Api\ProjectsController@update')
-        ->name('api.projects.update');
+        Route::delete('/{project}', 'Api\ProjectsController@destroy')
+            ->name('api.projects.delete');
 
-    Route::get('/', 'Api\ProjectsController@index')
-        ->name('api.projects.index');
+        Route::patch('/{project}', 'Api\ProjectsController@update')
+            ->name('api.projects.update');
 
-    Route::post('/', 'Api\ProjectsController@handleCreate')
-        ->name('api.projects.create');
+        Route::get('/', 'Api\ProjectsController@index')
+            ->name('api.projects.index');
 
+        Route::post('/', 'Api\ProjectsController@handleCreate')
+            ->name('api.projects.create');
+    });
 });

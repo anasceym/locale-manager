@@ -26,7 +26,7 @@ class ImportApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $postData = [];
 
@@ -42,7 +42,7 @@ class ImportApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $postData = [];
 
@@ -60,7 +60,7 @@ class ImportApiTest extends TestCase
 
         $anotherUser = factory(App\User::class)->create();
 
-        $this->be($anotherUser);
+        $this->be($anotherUser, 'api');
 
         $request = $this->json('post', "/api/projects/{$project->id}/import/file");
 
@@ -79,7 +79,7 @@ class ImportApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');;
 
         $namespace = factory(App\Project_namespace::class)->create(['name' => $testingData->get('namespace'), 'project_id' => $project->id]);
 
@@ -114,7 +114,7 @@ class ImportApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');;
 
         $namespace = factory(App\Project_namespace::class)->create(['name' => $testingData->get('namespace'), 'project_id' => $project->id]);
 
