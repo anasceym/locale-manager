@@ -43,4 +43,19 @@ class ProjectsController extends Controller
 
         return view('projects.edit', compact('project'));
     }
+
+    /**
+     * Project show
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function show(Project $project) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            abort(404);
+        }
+
+        return view('projects.show', compact('project'));
+    }
 }

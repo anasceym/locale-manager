@@ -19,6 +19,7 @@
             <td>{{project.name}}</td>
             <td>{{project.created_at}}</td>
             <td>
+                <a v-bind:href="'/projects/'+project.id" class="btn btn-xs btn-success">Show</a>
                 <a v-bind:href="'/projects/'+project.id+'/edit'" class="btn btn-xs btn-primary">Update</a>
                 <a href="#" class="btn btn-xs btn-danger" @click="deleteProjectClickHandler(project, index)">Delete</a>
             </td>
