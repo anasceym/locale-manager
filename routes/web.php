@@ -21,8 +21,9 @@ Route::group([
     'middleware' => 'auth'
 ], function() {
 
-    Route::get('projects', 'ProjectsController@index')->name('projects.index');
+    Route::get('projects/{project}/edit', 'ProjectsController@edit')->name('projects.edit');
     Route::get('projects/new', 'ProjectsController@create')->name('projects.new');
+    Route::get('projects', 'ProjectsController@index')->name('projects.index');
 
     Route::get('passport', function() {
         return view('passport.index');

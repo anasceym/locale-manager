@@ -33,4 +33,43 @@ class ProjectsRouteTest extends TestCase
 
         $this->assertResponseOk();
     }
+
+    /**
+     * @test
+     */
+    public function it_should_display_project_update_page () {
+
+        $user = factory(App\User::class)->create();
+
+        $project = factory(App\Project::class)->create([
+            'user_id' => $user->id
+        ]);
+
+        $this->be($user);
+
+        $response = $this->visitRoute('projects.edit', [ 'project' => $project->id ]);
+
+        $this->assertViewHas('project');
+        $this->assertResponseOk();;
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_return_404_when_unauthorized_to_update_specific_project() {
+
+        $user = factory(App\User::class)->create();
+
+        $project = factory(App\Project::class)->create([
+            'user_id' => $user->id
+        ]);
+
+        $anotherUser = factory(App\User::class)->create();
+
+        $this->be($anotherUser);
+
+        $this->route('GET', 'projects.edit', [ 'project' => $project->id ]);
+
+        $this->assertResponseStatus(404);
+    }
 }
