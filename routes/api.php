@@ -38,6 +38,9 @@ Route::group([
         Route::post('/{project}/lang', 'Api\ProjectsController@postLang')
             ->name('api.projects.lang.create');
 
+        Route::get('/{project}/lang', 'Api\ProjectsController@getLang')
+            ->name('api.projects.lang');
+
         Route::get('/{project}/namespaces/{namespace}', 'Api\ProjectsController@showNamespace')
             ->name('api.projects.namespaces.show');
 

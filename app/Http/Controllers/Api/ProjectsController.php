@@ -105,6 +105,30 @@ class ProjectsController extends ApiBaseController
     }
 
     /**
+     * Method to get all Project Langs
+     *
+     * @param Request $request
+     * @param Project $project
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getLang(Request $request, Project $project) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $projectLangs = $project->langs()->get();
+
+        foreach($projectLangs as $index => $lang) {
+
+            $projectLangs[$index]['lang_name'] = Config::get("locale.{$lang->lang_code}");
+        }
+
+        return response()->json($projectLangs, 200);
+    }
+
+    /**
      * Method to set specific Project language
      *
      * @param Request $request
