@@ -19,8 +19,7 @@
             <td>{{project.name}}</td>
             <td>{{project.created_at}}</td>
             <td>
-                <a href="#" class="btn btn-xs btn-primary">Update</a>
-                <a href="#" class="btn btn-xs btn-danger">Delete</a>
+                <a href="#" class="btn btn-xs btn-danger" @click="deleteProjectClickHandler(project, index)">Delete</a>
             </td>
         </tr>
         </tbody>
@@ -30,7 +29,7 @@
 <script>
     export default {
 
-        data: function () {
+        data() {
             return {
                 projects: [],
                 isLoading: false
@@ -39,7 +38,7 @@
 
         methods: {
 
-            fetchProjects: function() {
+            fetchProjects() {
 
                 this.isLoading = true
 
@@ -49,13 +48,28 @@
 
                     this.isLoading = false
                 }, (response) => {
-
                     this.isLoading = false
                 });
+            },
+
+            deleteProjectClickHandler(project, index) {
+
+                if (confirm("Are you sure want to delete this project?")) {
+
+                    this.$http.delete('/api/projects/' + project.id).then((response) => {
+
+                        if (response.status === 204) {
+
+                            this.projects.splice(index, 1)
+                        }
+                    }, (response) => {
+
+                    });
+                }
             }
         },
 
-        mounted: function () {
+        mounted() {
 
             this.fetchProjects()
 

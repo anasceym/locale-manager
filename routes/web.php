@@ -22,6 +22,7 @@ Route::group([
 ], function() {
 
     Route::get('projects', 'ProjectsController@index')->name('projects.index');
+    Route::get('projects/new', 'ProjectsController@create')->name('projects.new');
 
     Route::get('passport', function() {
         return view('passport.index');

@@ -6,12 +6,13 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Projects
+                    New Project
 
-                    <a class="btn btn-primary btn-xs pull-right" href="{{route('projects.new')}}">Add project</a>
+                    <a class="btn btn-danger btn-xs pull-right" href="{{route('projects.index')}}">Back to projects</a>
                 </div>
-
-                <project></project>
+                <div class="panel-body">
+                    <projectnew></projectnew>
+                </div>
             </div>
         </div>
     </div>
