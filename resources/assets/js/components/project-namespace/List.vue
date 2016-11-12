@@ -15,6 +15,21 @@
                         <td>Actions</td>
                     </tr>
                     </thead>
+                    <tbody>
+                    <tr v-if="!projectNamespaces.length">
+                        <td colspan="4">
+                            <span>No project's namespaces created</span>
+                        </td>
+                    </tr>
+                    <tr v-for="(namespace, index) in projectNamespaces">
+                        <td>{{index+1}}</td>
+                        <td>{{namespace.name}}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-xs">Show</button>
+                            <button type="button" class="btn btn-danger btn-xs" @click="removeProjectNamespaceClickHandler($event, index, namespace)">Remove</button>
+                        </td>
+                    </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -46,7 +61,8 @@
 
         data() {
             return {
-                newNamespaceName: ''
+                newNamespaceName: '',
+                projectNamespaces: []
             }
         },
 
@@ -59,7 +75,10 @@
                         name: this.newNamespaceName
                     }).then((response) => {
 
-                        this.modalAddNamespace.modal('hide')
+                        this.fetchProjectNamespaces().then(() => {
+
+                            this.modalAddNamespace.modal('hide')
+                        })
                     }, (response) => {
 
                     })
@@ -77,6 +96,40 @@
             openModalNewNamespaceClickHandler() {
 
                 this.modalAddNamespace.modal()
+            },
+            removeProjectNamespaceClickHandler(event, index, namespace) {
+
+                event.preventDefault()
+
+                if (confirm('Are you sure want to remove this namespace?')) {
+
+                    this.$http.delete(`/api/projects/${this.projectId}/namespaces/${namespace.id}`).then((response) => {
+
+                        if (response.status === 204) {
+
+                            this.projectNamespaces.splice(index, 1)
+                        }
+                    }, (response) => {
+
+                    })
+                }
+            },
+            fetchProjectNamespaces() {
+
+                return new Promise((resolve, reject) => {
+                    this.$http.get(`/api/projects/${this.projectId}/namespaces`).then((response) => {
+
+                        if (response.status === 200) {
+
+                            this.projectNamespaces = response.body
+                        }
+
+                        return resolve(true)
+                    }, (response) => {
+
+                        return resolve(true)
+                    })
+                })
             }
         },
 
@@ -87,6 +140,8 @@
         mounted() {
 
             this.modalAddNamespace = $('#modalProjectNamespace')
+
+            this.fetchProjectNamespaces()
 
             console.log('Projects namespace component ready.')
         },
