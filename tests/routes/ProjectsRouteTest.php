@@ -32,7 +32,5 @@ class ProjectsRouteTest extends TestCase
         $this->visitRoute('projects.index');
 
         $this->assertResponseOk();
-
-        $this->assertViewHas('projects');
     }
 }
