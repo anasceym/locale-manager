@@ -9,10 +9,15 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+        <tr v-if="isLoading">
+            <td colspan="4">
+                <span>Loading...</span>
+            </td>
+        </tr>
+        <tr v-for="(project, index) in projects">
+            <td>{{index+1}}</td>
+            <td>{{project.name}}</td>
+            <td>{{project.created_at}}</td>
             <td>
                 <a href="#" class="btn btn-xs btn-primary">Update</a>
                 <a href="#" class="btn btn-xs btn-danger">Delete</a>
@@ -24,13 +29,36 @@
 
 <script>
     export default {
-        mounted() {
-            this.$http.get('/api/projects').then((response) => {
-                // success callback
-                console.log(response)
-            }, (response) => {
-                // error callback
-            });
+
+        data: function () {
+            return {
+                projects: [],
+                isLoading: false
+            }
+        },
+
+        methods: {
+
+            fetchProjects: function() {
+
+                this.isLoading = true
+
+                this.$http.get('/api/projects').then((response) => {
+
+                    this.projects = response.data.data
+
+                    this.isLoading = false
+                }, (response) => {
+
+                    this.isLoading = false
+                });
+            }
+        },
+
+        mounted: function () {
+
+            this.fetchProjects()
+
             console.log('Projects component ready.')
         }
     }
