@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-12">
             <div class="row">
                 <div class="col-xs-12">
                     <div class="panel panel-default">
@@ -24,6 +24,10 @@
             <div class="row">
                 <div class="col-sm-6">
                     <projectlanguage project-id="{{$project->id}}"></projectlanguage>
+                </div>
+
+                <div class="col-sm-6">
+                    <projectnamespace project-id="{{$project->id}}"></projectnamespace>
                 </div>
             </div>
         </div>
