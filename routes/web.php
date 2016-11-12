@@ -17,10 +17,15 @@ Route::get('/', function () {
 
 Route::get('home', 'HomeController@index');
 
-Route::get('projects', 'ProjectsController@index')->name('projects.index');
+Route::group([
+    'middleware' => 'auth'
+], function() {
 
-Route::get('passport', function() {
-   return view('passport.index');
+    Route::get('projects', 'ProjectsController@index')->name('projects.index');
+
+    Route::get('passport', function() {
+        return view('passport.index');
+    });
 });
 
 Auth::routes();
