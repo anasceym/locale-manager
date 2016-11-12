@@ -22,6 +22,50 @@ class ProjectNamespaceApiTest extends TestCase
     /**
      * @test
      */
+    public function it_should_list_all_project_namespaces() {
+
+        $namespaces = factory(App\Project_namespace::class, 10)->create();
+
+        $project = $namespaces[0]->project;
+
+        $owner = $project->owner;
+
+        $this->be($owner, 'api');
+
+        $request = $this->json('get', "/api/projects/{$project->id}/namespaces");
+
+        $expectedJsonStructure = [
+            '*' => [
+                'id',
+                'name'
+            ]
+        ];
+
+        $this->assertResponseStatus(200);
+        $request->seeJsonStructure($expectedJsonStructure);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_response_404_when_unauthorized_to_get_project_namespaces() {
+
+        $namespaces = factory(App\Project_namespace::class, 10)->create();
+
+        $project = $namespaces[0]->project;
+
+        $anotherUser = factory(App\User::class)->create();
+
+        $this->be($anotherUser, 'api');
+
+        $request = $this->json('get', "/api/projects/{$project->id}/namespaces");
+
+        $this->assertResponseStatus(404);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_add_a_project_namespace() {
 
         $project = factory(App\Project::class)->create();

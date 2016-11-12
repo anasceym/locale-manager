@@ -201,6 +201,24 @@ class ProjectsController extends ApiBaseController
     }
 
     /**
+     * Method to get all project namespaces
+     * 
+     * @param Request $request
+     * @param Project $project
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getNamespaces(Request $request, Project $project) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $namespaces = $project->namespaces()->get();
+
+        return response()->json($namespaces, 200);
+    }
+    /**
      * Method to create namespace
      *
      * @param Request $request
