@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LocaleManagerApiTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /**
      * A basic test example.
      *
