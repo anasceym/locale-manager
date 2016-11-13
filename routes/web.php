@@ -25,6 +25,7 @@ Route::group([
     Route::get('projects/new', 'ProjectsController@create')->name('projects.new');
     Route::get('projects/{project}', 'ProjectsController@show')->name('projects.show');
     Route::get('projects/{project}/edit', 'ProjectsController@edit')->name('projects.edit');
+    Route::get('projects/{project}/namespaces/{namespace}', 'ProjectNamespaceController@show')->name('projects.namespaces.show');
 
     Route::get('passport', function() {
         return view('passport.index');

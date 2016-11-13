@@ -25,7 +25,7 @@
                         <td>{{index+1}}</td>
                         <td>{{namespace.name}}</td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-xs">Show</button>
+                            <a class="btn btn-primary btn-xs" :href="'/projects/'+projectId+'/namespaces/'+namespace.id">Show</a>
                             <button type="button" class="btn btn-danger btn-xs" @click="removeProjectNamespaceClickHandler($event, index, namespace)">Remove</button>
                         </td>
                     </tr>

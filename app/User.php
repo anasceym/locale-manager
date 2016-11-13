@@ -37,4 +37,14 @@ class User extends Authenticatable
 
         return $this->hasMany(Project::class);
     }
+
+    /**
+     * User owned project namespaces
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function namespaces() {
+
+        return $this->hasManyThrough(Project_namespace::class, Project::class);
+    }
 }
