@@ -59,6 +59,9 @@ Route::group([
         Route::get('/{project}/namespaces/{namespace}/translation_keys', 'Api\ProjectsController@getNamespaceTranslationKeys')
             ->name('api.projects.namespaces.translation_keys');
 
+        Route::post('/{project}/namespaces/{namespace}/translation_keys', 'Api\ProjectsController@createNamespaceTranslationKeys')
+            ->name('api.projects.namespaces.translation_keys.create');
+
 
         Route::get('/{project}', 'Api\ProjectsController@show')
             ->name('api.projects.show');

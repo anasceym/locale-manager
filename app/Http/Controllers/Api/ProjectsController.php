@@ -6,6 +6,7 @@ use App\Project;
 use App\Project_lang;
 use App\Project_namespace;
 use App\Translation;
+use App\Translation_key;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -335,7 +336,7 @@ class ProjectsController extends ApiBaseController
 
     /**
      * Route : api.projects.namespaces.translation_keys
-     * 
+     *
      * @param Request $request
      * @param Project $project
      * @param Project_namespace $namespace
@@ -358,6 +359,43 @@ class ProjectsController extends ApiBaseController
         $keys = $namespace->translation_keys()->get();
 
         return response()->json($keys, 200);
+    }
+
+    /**
+     * Route : api.projects.namespaces.translation_keys.create
+     *
+     * @param Request $request
+     * @param Project $project
+     * @param Project_namespace $namespace
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createNamespaceTranslationKeys(Request $request, Project $project, Project_namespace $namespace) {
+
+        $this->validate($request, [
+           'translation_key' => 'required'
+        ]);
+
+        if(!Auth::user()->projects()->find($project->id) || !$project->namespaces()->find($namespace->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $requestArray = $request->all();
+
+        $saveData = [
+            'project_id' => $project->id,
+            'project_namespace_id' => $namespace->id,
+            'translation_key' => $requestArray['translation_key']
+        ];
+
+        $translation_key = Translation_key::create($saveData);
+
+        if (!$translation_key) {
+
+            return response()->json([], 500);
+        }
+
+        return response()->json([], 201);
     }
 
     /**

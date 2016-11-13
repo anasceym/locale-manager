@@ -51,7 +51,6 @@ $factory->define(App\Translation_key::class, function (Faker\Generator $faker) {
     return [
         'translation_key' => str_replace(' ', '_', strtolower($faker->company)),
         'project_id' => factory(App\Project::class)->create()->id,
-        'project_namespace_id' => factory(App\Project_namespace::class)->create()->id,
-        'project_lang_id' => factory(App\Project_lang::class)->create()->id
+        'project_namespace_id' => factory(App\Project_namespace::class)->create()->id
     ];
 });

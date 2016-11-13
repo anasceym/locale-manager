@@ -16,9 +16,6 @@ class CreateTranslationKeysTable extends Migration
         Schema::create('translation_keys', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->integer('project_lang_id')->unsigned();
-            $table->foreign('project_lang_id')->references('id')->on('project_langs')->onDelete('cascade');
-
             $table->integer('project_namespace_id')->unsigned();
             $table->foreign('project_namespace_id')->references('id')->on('project_namespaces')->onDelete('cascade');
 
