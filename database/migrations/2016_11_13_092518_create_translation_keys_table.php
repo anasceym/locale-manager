@@ -27,6 +27,8 @@ class CreateTranslationKeysTable extends Migration
 
             $table->string('translation_key');
 
+            $table->softDeletes();
+
             $table->timestamps();
         });
     }
