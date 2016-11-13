@@ -399,7 +399,14 @@ class ProjectsController extends ApiBaseController
                     'text_value' => $value
                 ];
 
-                $translation = Translation::create($preparedCreateData);
+                if (!$translation = Translation::where('project_lang_id', $requestArray['project_lang_id'])
+                    ->where('project_namespace_id', $requestArray['project_namespace_id'])
+                    ->where('project_id', $project->id)
+                    ->where('text_key', $key)
+                    ->where('text_value', $value)->first()) {
+
+                    $translation = Translation::create($preparedCreateData);
+                }
 
                 if (!$translation) {
 
