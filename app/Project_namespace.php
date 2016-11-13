@@ -19,6 +19,15 @@ class Project_namespace extends Model
     ];
 
     /**
+     * Append to Json object
+     *
+     * @var array
+     */
+    protected $appends = [
+        'name_key'
+    ];
+
+    /**
      * Relation to App\Project
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

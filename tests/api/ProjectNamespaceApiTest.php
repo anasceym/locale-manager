@@ -37,7 +37,8 @@ class ProjectNamespaceApiTest extends TestCase
         $expectedJsonStructure = [
             '*' => [
                 'id',
-                'name'
+                'name',
+                'name_key'
             ]
         ];
 
@@ -78,7 +79,8 @@ class ProjectNamespaceApiTest extends TestCase
 
         $expectedJsonStructure = [
             'id',
-            'name'
+            'name',
+            'name_key'
         ];
 
         $request = $this->json('post', "/api/projects/{$project->id}/namespaces", $postData);
@@ -209,7 +211,8 @@ class ProjectNamespaceApiTest extends TestCase
 
         $request->seeJsonStructure([
             'id',
-            'name'
+            'name',
+            'name_key'
         ]);
     }
 
