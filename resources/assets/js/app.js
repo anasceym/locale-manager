@@ -19,6 +19,7 @@ Vue.component('projectnew', require('./components/projects/New.vue'));
 Vue.component('projectupdate', require('./components/projects/Update.vue'));
 Vue.component('projectlanguage', require('./components/project-language/List.vue'));
 Vue.component('projectnamespace', require('./components/project-namespace/List.vue'));
+Vue.component('projectnamespacedetails', require('./components/project-namespace/Show.vue'));
 Vue.component('passport-clients', require('./components/passport/Clients.vue'));
 Vue.component('passport-authorized-clients', require('./components/passport/AuthorizedClients.vue'));
 Vue.component('passport-personal-access-tokens', require('./components/passport/PersonalAccessTokens.vue'));
