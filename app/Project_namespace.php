@@ -47,4 +47,14 @@ class Project_namespace extends Model
 
         return str_replace(' ', '_', strtolower($this->attributes['name']));
     }
+
+    /**
+     * Relation to App\Translation_key
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function translation_keys() {
+
+        return $this->hasMany(Translation_key::class);
+    }
 }

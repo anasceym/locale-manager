@@ -56,6 +56,9 @@ Route::group([
         Route::patch('/{project}/namespaces/{namespace}', 'Api\ProjectsController@updateNamespace')
             ->name('api.projects.namespaces.update');
 
+        Route::get('/{project}/namespaces/{namespace}/translation_keys', 'Api\ProjectsController@getNamespaceTranslationKeys')
+            ->name('api.projects.namespaces.translation_keys');
+
 
         Route::get('/{project}', 'Api\ProjectsController@show')
             ->name('api.projects.show');

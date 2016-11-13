@@ -334,6 +334,33 @@ class ProjectsController extends ApiBaseController
     }
 
     /**
+     * Route : api.projects.namespaces.translation_keys
+     * 
+     * @param Request $request
+     * @param Project $project
+     * @param Project_namespace $namespace
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getNamespaceTranslationKeys(Request $request, Project $project, Project_namespace $namespace) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $namespace = $project->namespaces()->find($namespace->id);
+
+        if (!$namespace) {
+
+            return response()->json([], 404);
+        }
+
+        $keys = $namespace->translation_keys()->get();
+
+        return response()->json($keys, 200);
+    }
+
+    /**
      * Method to handle import
      *
      * @param Request $request
