@@ -6,6 +6,7 @@ use App\Project;
 use App\Project_lang;
 use App\Project_namespace;
 use App\Translation;
+use App\Translation_key;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -105,6 +106,30 @@ class ProjectsController extends ApiBaseController
     }
 
     /**
+     * Method to get all Project Langs
+     *
+     * @param Request $request
+     * @param Project $project
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getLang(Request $request, Project $project) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $projectLangs = $project->langs()->get();
+
+        foreach($projectLangs as $index => $lang) {
+
+            $projectLangs[$index]['lang_name'] = Config::get("locale.{$lang->lang_code}");
+        }
+
+        return response()->json($projectLangs, 200);
+    }
+
+    /**
      * Method to set specific Project language
      *
      * @param Request $request
@@ -176,6 +201,24 @@ class ProjectsController extends ApiBaseController
         return response()->json([], 204);
     }
 
+    /**
+     * Method to get all project namespaces
+     * 
+     * @param Request $request
+     * @param Project $project
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getNamespaces(Request $request, Project $project) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $namespaces = $project->namespaces()->get();
+
+        return response()->json($namespaces, 200);
+    }
     /**
      * Method to create namespace
      *
@@ -292,6 +335,70 @@ class ProjectsController extends ApiBaseController
     }
 
     /**
+     * Route : api.projects.namespaces.translation_keys
+     *
+     * @param Request $request
+     * @param Project $project
+     * @param Project_namespace $namespace
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getNamespaceTranslationKeys(Request $request, Project $project, Project_namespace $namespace) {
+
+        if(!Auth::user()->projects()->find($project->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $namespace = $project->namespaces()->find($namespace->id);
+
+        if (!$namespace) {
+
+            return response()->json([], 404);
+        }
+
+        $keys = $namespace->translation_keys()->get();
+
+        return response()->json($keys, 200);
+    }
+
+    /**
+     * Route : api.projects.namespaces.translation_keys.create
+     *
+     * @param Request $request
+     * @param Project $project
+     * @param Project_namespace $namespace
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createNamespaceTranslationKeys(Request $request, Project $project, Project_namespace $namespace) {
+
+        $this->validate($request, [
+           'translation_key' => 'required'
+        ]);
+
+        if(!Auth::user()->projects()->find($project->id) || !$project->namespaces()->find($namespace->id)) {
+
+            return response()->json([], 404);
+        }
+
+        $requestArray = $request->all();
+
+        $saveData = [
+            'project_id' => $project->id,
+            'project_namespace_id' => $namespace->id,
+            'translation_key' => $requestArray['translation_key']
+        ];
+
+        $translation_key = Translation_key::create($saveData);
+
+        if (!$translation_key) {
+
+            return response()->json([], 500);
+        }
+
+        return response()->json([], 201);
+    }
+
+    /**
      * Method to handle import
      *
      * @param Request $request
@@ -357,7 +464,14 @@ class ProjectsController extends ApiBaseController
                     'text_value' => $value
                 ];
 
-                $translation = Translation::create($preparedCreateData);
+                if (!$translation = Translation::where('project_lang_id', $requestArray['project_lang_id'])
+                    ->where('project_namespace_id', $requestArray['project_namespace_id'])
+                    ->where('project_id', $project->id)
+                    ->where('text_key', $key)
+                    ->where('text_value', $value)->first()) {
+
+                    $translation = Translation::create($preparedCreateData);
+                }
 
                 if (!$translation) {
 

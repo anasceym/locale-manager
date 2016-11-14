@@ -22,11 +22,56 @@ class ProjectLangApiTest extends TestCase
     /**
      * @test
      */
+    public function it_should_get_all_project_langs() {
+
+        $projectLangs = factory(App\Project_lang::class, 10)->create();
+
+        $project = $projectLangs[0]->project;
+
+        $owner = $project->owner;
+
+        $this->be($owner, 'api');
+
+        $request = $this->json('get', "/api/projects/{$project->id}/lang");
+
+        $expectedResponseJsonStructure = [
+            '*' => [
+                'id',
+                'lang_code',
+                'lang_name'
+            ]
+        ];
+
+        $this->assertResponseStatus(200);
+        $request->seeJsonStructure($expectedResponseJsonStructure);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_response_404_when_unauthorize_to_get_project_langs() {
+
+        $projectLangs = factory(App\Project_lang::class, 10)->create();
+
+        $project = $projectLangs[0]->project;
+
+        $anotherUser = factory(App\User::class)->create();
+
+        $this->be($anotherUser, 'api');
+
+        $request = $this->json('get', "/api/projects/{$project->id}/lang");
+
+        $this->assertResponseStatus(404);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_set_project_lang() {
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $langKeys = collect(collect(Config::get('locale'))->keys());
 
@@ -54,7 +99,7 @@ class ProjectLangApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $request = $this->json('post', "/api/projects/{$project->id}/lang");
 
@@ -76,7 +121,7 @@ class ProjectLangApiTest extends TestCase
 
         $existingProjectLang = factory(App\Project_lang::class)->create(['lang_code' => $sameCode]);
 
-        $this->be($existingProjectLang->project->owner);
+        $this->be($existingProjectLang->project->owner, 'api');
 
         $postData = [
             'lang_code' => $sameCode
@@ -102,7 +147,7 @@ class ProjectLangApiTest extends TestCase
 
         $otherUser = factory(App\User::class)->create();
 
-        $this->be($otherUser);
+        $this->be($otherUser, 'api');
 
         $langKeys = collect(collect(Config::get('locale'))->keys());
 
@@ -124,7 +169,7 @@ class ProjectLangApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $postData = [
             'lang_code' => 'asdfhgkdlsafqoe'
@@ -144,7 +189,7 @@ class ProjectLangApiTest extends TestCase
 
         $project_lang = factory(App\Project_lang::class)->create();
 
-        $this->be($project_lang->project->owner);
+        $this->be($project_lang->project->owner, 'api');
 
         $request = $this->json('delete', "/api/projects/{$project_lang->project->id}/lang/{$project_lang->id}");
 
@@ -162,7 +207,7 @@ class ProjectLangApiTest extends TestCase
 
         $another_project_lang = factory(App\Project_lang::class)->create();
 
-        $this->be($project_lang->project->owner);
+        $this->be($project_lang->project->owner, 'api');
 
         $request = $this->json('delete', "/api/projects/{$project_lang->project->id}/lang/{$another_project_lang->id}");
 
@@ -178,7 +223,7 @@ class ProjectLangApiTest extends TestCase
 
         $anotherUser = factory(App\User::class)->create();
 
-        $this->be($anotherUser);
+        $this->be($anotherUser, 'api');
 
         $request = $this->json('delete', "/api/projects/{$project_lang->project->id}/lang/{$project_lang->id}");
 
@@ -193,7 +238,7 @@ class ProjectLangApiTest extends TestCase
 
         $project_lang = factory(App\Project_lang::class)->create();
 
-        $this->be($project_lang->project->owner);
+        $this->be($project_lang->project->owner, 'api');
 
         $request = $this->json('delete', "/api/projects/{$project_lang->project->id}/lang/{$project_lang->lang_code}");
 

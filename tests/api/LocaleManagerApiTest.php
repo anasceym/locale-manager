@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LocaleManagerApiTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /**
      * A basic test example.
      *
@@ -21,6 +23,8 @@ class LocaleManagerApiTest extends TestCase
      */
     public function it_should_return_all_available_locale() {
 
+        $this->beAuthenticatedUser();
+
         $response = $this->json('get', '/api/locales');
 
         $response->seeJson(Config::get('locale'));
@@ -31,6 +35,8 @@ class LocaleManagerApiTest extends TestCase
      */
     public function it_should_failed_when_no_auth_token_provided() {
 
+        $this->beAuthenticatedUser();
+
         $response = $this->json('get', 'api/locales');
 
         $response->assertResponseStatus(401);
@@ -40,6 +46,8 @@ class LocaleManagerApiTest extends TestCase
      * @test
      */
     public function it_should_return_fullname_of_a_locale_code() {
+
+        $this->beAuthenticatedUser();
 
         $code = 'ms';
 
@@ -62,6 +70,8 @@ class LocaleManagerApiTest extends TestCase
      */
     public function it_should_return_404_if_no_code_found() {
 
+        $this->beAuthenticatedUser();
+        
         $code = 'blablabla';
 
         $response = $this->json('get', "/api/locales/{$code}/name");

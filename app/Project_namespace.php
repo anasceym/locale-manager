@@ -19,6 +19,15 @@ class Project_namespace extends Model
     ];
 
     /**
+     * Append to Json object
+     *
+     * @var array
+     */
+    protected $appends = [
+        'name_key'
+    ];
+
+    /**
      * Relation to App\Project
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -37,5 +46,15 @@ class Project_namespace extends Model
     public function getNameKeyAttribute($value) {
 
         return str_replace(' ', '_', strtolower($this->attributes['name']));
+    }
+
+    /**
+     * Relation to App\Translation_key
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function translation_keys() {
+
+        return $this->hasMany(Translation_key::class);
     }
 }

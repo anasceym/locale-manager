@@ -1,5 +1,6 @@
 <?php
 
+use App\Translation;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -26,7 +27,7 @@ class ImportApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $postData = [];
 
@@ -42,7 +43,7 @@ class ImportApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $postData = [];
 
@@ -60,7 +61,7 @@ class ImportApiTest extends TestCase
 
         $anotherUser = factory(App\User::class)->create();
 
-        $this->be($anotherUser);
+        $this->be($anotherUser, 'api');
 
         $request = $this->json('post', "/api/projects/{$project->id}/import/file");
 
@@ -79,7 +80,7 @@ class ImportApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');;
 
         $namespace = factory(App\Project_namespace::class)->create(['name' => $testingData->get('namespace'), 'project_id' => $project->id]);
 
@@ -114,7 +115,7 @@ class ImportApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');;
 
         $namespace = factory(App\Project_namespace::class)->create(['name' => $testingData->get('namespace'), 'project_id' => $project->id]);
 
@@ -147,6 +148,74 @@ class ImportApiTest extends TestCase
                     'text_key' => $key,
                     'text_value' => $value
                 ]);
+            }
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_ignore_if_certain_key_already_exists() {
+
+        $testingData = collect([
+            'namespace' => 'test',
+            'lang_code' => 'en'
+        ]);
+
+        $project = factory(App\Project::class)->create();
+
+        $this->be($project->owner, 'api');;
+
+        $namespace = factory(App\Project_namespace::class)->create(['name' => $testingData->get('namespace'), 'project_id' => $project->id]);
+
+        $lang = factory(App\Project_lang::class)->create(['lang_code' => $testingData->get('lang_code'), 'project_id' => $project->id]);
+
+        $path = $this->getTestResourceFolder();
+
+        $fileName = "{$lang->lang_code}_{$namespace->name_key}.php";
+
+        $uploadedFile = new UploadedFile($path . $fileName, $fileName, null, null, null, true);
+
+        $testFileContent = include($path.$fileName);
+
+        $postData = [
+            'file' => $uploadedFile,
+            'project_lang_id' => $lang->id,
+            'project_namespace_id' => $namespace->id
+        ];
+
+        // Before request, make sure the translations already in DB
+        if (is_array($testFileContent)) {
+
+            foreach($testFileContent as $key => $value) {
+
+                $preparedCreateData = [
+                    'project_lang_id' => $lang->id,
+                    'project_namespace_id' => $namespace->id,
+                    'project_id' => $project->id,
+                    'text_key' => $key,
+                    'text_value' => $value
+                ];
+
+                $translation = Translation::create($preparedCreateData);
+            }
+        }
+
+        $request = $this->json('post', "/api/projects/{$project->id}/import/file", $postData);
+
+        $this->assertResponseStatus(200);
+
+        if (is_array($testFileContent)) {
+
+            foreach($testFileContent as $key => $value) {
+
+                $count = Translation::where('project_lang_id', $lang->id)
+                    ->where('project_namespace_id', $namespace->id)
+                    ->where('project_id', $project->id)
+                    ->where('text_key', $key)
+                    ->where('text_value', $value)->count();
+
+                $this->assertEquals(1, $count);
             }
         }
     }

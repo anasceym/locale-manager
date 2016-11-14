@@ -4,10 +4,11 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -35,5 +36,15 @@ class User extends Authenticatable
     public function projects() {
 
         return $this->hasMany(Project::class);
+    }
+
+    /**
+     * User owned project namespaces
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function namespaces() {
+
+        return $this->hasManyThrough(Project_namespace::class, Project::class);
     }
 }

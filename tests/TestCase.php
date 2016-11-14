@@ -51,4 +51,11 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
             'message',
         ];
     }
+
+    public function beAuthenticatedUser () {
+
+        $user = factory(App\User::class)->create();
+
+        $this->be($user, 'api');
+    }
 }

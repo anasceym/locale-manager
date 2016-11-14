@@ -26,7 +26,7 @@ class ProjectApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $request = $this->json('get', '/api/projects');
 
@@ -43,7 +43,7 @@ class ProjectApiTest extends TestCase
             'name' => 'Kiddos'
         ];
 
-        $this->be(factory(App\User::class)->create());
+        $this->be(factory(App\User::class)->create(), 'api');
 
         $request = $this->json('post', '/api/projects', $postData);
 
@@ -56,7 +56,7 @@ class ProjectApiTest extends TestCase
      */
     public function it_should_failed_when_no_post_data_is_sent() {
 
-        $this->be(factory(App\User::class)->create());
+        $this->be(factory(App\User::class)->create(), 'api');
 
         $request = $this->json('post', '/api/projects');
 
@@ -72,7 +72,7 @@ class ProjectApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $request = $this->json('get', "/api/projects/{$project->id}");
 
@@ -89,7 +89,7 @@ class ProjectApiTest extends TestCase
 
         $differentUser = factory(App\User::class)->create();
 
-        $this->be($differentUser);
+        $this->be($differentUser, 'api');
 
         $request = $this->json('get', "/api/projects/{$project->id}");
 
@@ -103,7 +103,7 @@ class ProjectApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $request = $this->json('delete', "/api/projects/{$project->id}");
 
@@ -120,7 +120,7 @@ class ProjectApiTest extends TestCase
 
         $differentUser = factory(App\User::class)->create();
 
-        $this->be($differentUser);
+        $this->be($differentUser, 'api');
 
         $request = $this->json('delete', "/api/projects/{$project->id}");
 
@@ -139,7 +139,7 @@ class ProjectApiTest extends TestCase
             'name' => 'Kiddos New Project'
         ];
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $request = $this->json('patch', "/api/projects/{$project->id}", $updatePostData);
 
@@ -160,7 +160,7 @@ class ProjectApiTest extends TestCase
 
         $differentUser = factory(App\User::class)->create();
 
-        $this->be($differentUser);
+        $this->be($differentUser, 'api');
 
         $request = $this->json('patch', "/api/projects/{$project->id}");
 

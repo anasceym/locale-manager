@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ProjectNamespaceTest extends TestCase
 {
+    use DatabaseMigrations;
+
     /**
      * A basic test example.
      *

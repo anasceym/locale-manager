@@ -22,11 +22,56 @@ class ProjectNamespaceApiTest extends TestCase
     /**
      * @test
      */
+    public function it_should_list_all_project_namespaces() {
+
+        $namespaces = factory(App\Project_namespace::class, 10)->create();
+
+        $project = $namespaces[0]->project;
+
+        $owner = $project->owner;
+
+        $this->be($owner, 'api');
+
+        $request = $this->json('get', "/api/projects/{$project->id}/namespaces");
+
+        $expectedJsonStructure = [
+            '*' => [
+                'id',
+                'name',
+                'name_key'
+            ]
+        ];
+
+        $this->assertResponseStatus(200);
+        $request->seeJsonStructure($expectedJsonStructure);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_response_404_when_unauthorized_to_get_project_namespaces() {
+
+        $namespaces = factory(App\Project_namespace::class, 10)->create();
+
+        $project = $namespaces[0]->project;
+
+        $anotherUser = factory(App\User::class)->create();
+
+        $this->be($anotherUser, 'api');
+
+        $request = $this->json('get', "/api/projects/{$project->id}/namespaces");
+
+        $this->assertResponseStatus(404);
+    }
+
+    /**
+     * @test
+     */
     public function it_should_add_a_project_namespace() {
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $postData = [
             'name' => 'auth'
@@ -34,7 +79,8 @@ class ProjectNamespaceApiTest extends TestCase
 
         $expectedJsonStructure = [
             'id',
-            'name'
+            'name',
+            'name_key'
         ];
 
         $request = $this->json('post', "/api/projects/{$project->id}/namespaces", $postData);
@@ -51,7 +97,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $project = factory(App\Project::class)->create();
 
-        $this->be($project->owner);
+        $this->be($project->owner, 'api');
 
         $postData = [];
 
@@ -71,7 +117,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $anotherUser = factory(App\User::class)->create();
 
-        $this->be($anotherUser);
+        $this->be($anotherUser, 'api');
 
         $postData = [
             'name' => 'auth'
@@ -91,7 +137,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $existingNamespace = factory(App\Project_namespace::class)->create(['name' => $sameName]);
 
-        $this->be($existingNamespace->project->owner);
+        $this->be($existingNamespace->project->owner, 'api');
 
         $postData = [
             'name' => $sameName
@@ -109,7 +155,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $namespace = factory(App\Project_namespace::class)->create();
 
-        $this->be($namespace->project->owner);
+        $this->be($namespace->project->owner, 'api');
 
         $request = $this->json('delete', "/api/projects/{$namespace->project->id}/namespaces/{$namespace->id}");
 
@@ -125,7 +171,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $namespace = factory(App\Project_namespace::class)->create();
 
-        $this->be($namespace->project->owner);
+        $this->be($namespace->project->owner, 'api');
 
         $anotherProject = factory(App\Project::class)->create();
 
@@ -143,7 +189,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $anotherUser = factory(App\User::class)->create();
 
-        $this->be($anotherUser);
+        $this->be($anotherUser, 'api');
 
         $request = $this->json('delete', "/api/projects/{$namespace->project->id}/namespaces/{$namespace->id}");
 
@@ -157,7 +203,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $namespace = factory(App\Project_namespace::class)->create();
 
-        $this->be($namespace->project->owner);
+        $this->be($namespace->project->owner, 'api');
 
         $request = $this->json('get', "/api/projects/{$namespace->project->id}/namespaces/{$namespace->id}");
 
@@ -165,7 +211,8 @@ class ProjectNamespaceApiTest extends TestCase
 
         $request->seeJsonStructure([
             'id',
-            'name'
+            'name',
+            'name_key'
         ]);
     }
 
@@ -176,7 +223,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $namespace = factory(App\Project_namespace::class)->create();
 
-        $this->be($namespace->project->owner);
+        $this->be($namespace->project->owner, 'api');
 
         $request = $this->json('get', "/api/projects/{$namespace->project->id}/namespaces/dfdsdf");
 
@@ -192,7 +239,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $anotherUser = factory(App\User::class)->create();
 
-        $this->be($anotherUser);
+        $this->be($anotherUser, 'api');
 
         $request = $this->json('get', "/api/projects/{$namespace->project->id}/namespaces/{$namespace->id}");
 
@@ -208,7 +255,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $anotherProject = factory(App\Project::class)->create();
 
-        $this->be($anotherProject->owner);
+        $this->be($anotherProject->owner, 'api');
 
         $request = $this->json('get', "/api/projects/{$anotherProject->id}/namespaces/{$namespace->id}");
 
@@ -222,7 +269,7 @@ class ProjectNamespaceApiTest extends TestCase
 
         $namespace = factory(App\Project_namespace::class)->create();
 
-        $this->be($namespace->project->owner);
+        $this->be($namespace->project->owner, 'api');
 
         $updatePostData = [
             'name' => 'Kiddos'
